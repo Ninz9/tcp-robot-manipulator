@@ -12,6 +12,7 @@ public class Application {
             while (true){
                 Socket socket = serverSocket.accept();
                 Manipulator manipulator = new Manipulator(socket);
+                System.out.println("open on " +socket.getLocalSocketAddress());
                 new Thread(manipulator).start();
             }
         } catch (Exception e) {

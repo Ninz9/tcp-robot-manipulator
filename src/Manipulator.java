@@ -39,11 +39,14 @@ public class Manipulator implements Runnable {
     }
     void auth() throws Exception{
         username = takeMessage("CLIENT_USERNAME");
+        System.out.println(username);
         sendMessage("SERVER_KEQ_REQUEST", -1);
         int key = Integer.parseInt(takeMessage("CLIENT_KEQ_ID"));
+        System.out.println(key);
         int userHash = createHash(username);
         this.serverHash = (userHash + responseCreator.keys[key][0]) % 65536;
         this.clientHash = (userHash + responseCreator.keys[key][1]) % 65536;
+        System.out.println(userHash + "--" +clientHash);
         sendMessage("SERVER_CONFIRMATION", serverHash);
         int takenClientHash = Integer.parseInt(takeMessage("CLIENT_CONFIRMATION"));
         if (takenClientHash != clientHash){
