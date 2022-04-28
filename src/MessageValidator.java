@@ -21,11 +21,11 @@ public class MessageValidator {
      };
  }
 
-    static public Boolean Validation(MessageValidator validator,String  validation, String type){
-     return validator.response.get(type).t.matcher(validation).matches();
+    public Boolean Validation(String  validation, String type){
+     return response.get(type).t.matcher(validation).matches();
     }
-    static public Integer GetSizeOfMessage(MessageValidator validator, String type){
-     return validator.response.get(type).u;
+    public Integer GetSizeOfMessage( String type){
+     return response.get(type).u;
     }
 
 }

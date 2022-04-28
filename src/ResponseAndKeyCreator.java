@@ -24,7 +24,7 @@ public class ResponseAndKeyCreator {
                 {32037, 29295},
                 {18789, 13603},
                 {16443, 29533},
-                {19189, 21952}
+                {18189, 21952}
         };
 
     }
@@ -32,7 +32,7 @@ public class ResponseAndKeyCreator {
 
 
 
-    static String getResponse(ResponseAndKeyCreator responseCreator,String type){
-        return responseCreator.response.get(type) + "\u0007" + "\u0008";
+    String getResponse(String type){
+        return response.get(type) + "\u0007" + "\u0008";
     }
 }
