@@ -5,6 +5,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 public class Manipulator implements Runnable {
     PrintWriter writer;
@@ -64,9 +65,68 @@ public class Manipulator implements Runnable {
         return res;
     }
 
-    void move(){
+    void move() throws Exception{
+        Position goal = new Position(0, 0);
+        Position firstMove = go("MOVE");
+        if (Objects.equals(firstMove, goal)){
+            return;
+        }
+        Position nextMove = go("MOVE");
+        if (Objects.equals(nextMove, goal)){
+            return;
+        }
+
+        Position trend = differencePosition(nextMove,firstMove);
+
+        while (trend.x == 0 && trend.y == 0){
+            nextMove = go("SERVER_TURN_RIGHT");
+            trend = differencePosition(nextMove,firstMove);
+        }
+
+        while (nextMove == goal){
+            if (distance(sumPosition(nextMove, trend)) < distance(nextMove)){
+                firstMove = nextMove;
+                nextMove = go("MOVE");
+                if (firstMove != nextMove){
+                    continue;
+                }
+            }
+            if (distance(sumPosition(nextMove, trend.Turn("RIGHT"))) < distance(nextMove)){
+                nextMove = go("SERVER_TURN_RIGHT");
+                trend = trend.Turn("RIGHT");
+                nextMove = go("MOVE");
+                continue;
+            }
+            nextMove = go("SERVER_TURN_LEFT");
+            trend = trend.Turn("LEFT");
+            nextMove = go("MOVE");
+        }
+
+
 
     }
+
+    Position sumPosition(Position a, Position b){
+        return new Position(a.x + b.x, a.y + b.y);
+    }
+    Position differencePosition(Position a, Position b){
+        return new Position(a.x - b.x, a.y - b.y);
+    }
+    int distance (Position position){
+        return Math.abs(position.x) + Math.abs(position.y);
+    }
+
+    Position go(String type) throws Exception {
+        sendMessage(type, -1);
+        String message = takeMessage("CLIENT_OK");
+        return parseMoveAnswer(message);
+    }
+
+    Position parseMoveAnswer(String message){
+        String[] coordinates = message.split(" ");
+        return new Position(Integer.parseInt(coordinates[1]), Integer.parseInt(coordinates[2]));
+    }
+
 
     void pick(){
 
