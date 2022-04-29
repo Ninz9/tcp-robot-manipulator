@@ -67,12 +67,15 @@ public class Manipulator implements Runnable {
 
     void move() throws Exception{
         Position goal = new Position(0, 0);
-        Position firstMove = go("MOVE");
-        if (Objects.equals(firstMove, goal)){
+        Position firstMove = go("SERVER_MOVE");
+        PrintPosition(firstMove);
+        if (samePosition(firstMove, goal)){
+            System.out.println("HUI");
             return;
         }
-        Position nextMove = go("MOVE");
-        if (Objects.equals(nextMove, goal)){
+        Position nextMove = go("SERVER_MOVE");
+        PrintPosition(nextMove);
+        if (samePosition(nextMove, goal)){
             return;
         }
 
@@ -83,29 +86,38 @@ public class Manipulator implements Runnable {
             trend = differencePosition(nextMove,firstMove);
         }
 
-        while (nextMove == goal){
+        while (samePosition(nextMove, goal)){
             if (distance(sumPosition(nextMove, trend)) < distance(nextMove)){
                 firstMove = nextMove;
-                nextMove = go("MOVE");
-                if (firstMove != nextMove){
+                nextMove = go("SERVER_MOVE");
+                PrintPosition(nextMove);
+                if (!samePosition(firstMove, nextMove)){
                     continue;
                 }
             }
             if (distance(sumPosition(nextMove, trend.Turn("RIGHT"))) < distance(nextMove)){
                 nextMove = go("SERVER_TURN_RIGHT");
                 trend = trend.Turn("RIGHT");
-                nextMove = go("MOVE");
+                nextMove = go("SERVER_MOVE");
+                PrintPosition(nextMove);
                 continue;
             }
             nextMove = go("SERVER_TURN_LEFT");
             trend = trend.Turn("LEFT");
-            nextMove = go("MOVE");
+            nextMove = go("SERVER_MOVE");
+            PrintPosition(nextMove);
         }
 
 
 
     }
 
+    boolean samePosition(Position a, Position b){
+        return  (a.x == b.x && a.y == b.y) ;
+    }
+    void PrintPosition (Position a){
+        System.out.println("POSITION x:"+ a.x +" y:" + a.y);
+    }
     Position sumPosition(Position a, Position b){
         return new Position(a.x + b.x, a.y + b.y);
     }
